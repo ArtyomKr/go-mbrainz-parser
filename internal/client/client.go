@@ -10,25 +10,25 @@ import (
 )
 
 type Client struct {
-	baseUrl      string
-	httpClient   *http.Client
+	baseUrl    string
+	httpClient *http.Client
 }
 
 func NewClient() *Client {
 	return &Client{
-		httpClient:   &http.Client{},
-		baseUrl:      os.Getenv("CLIENT_ID"),
+		httpClient: &http.Client{},
+		baseUrl:    os.Getenv("BASE_URL"),
 	}
 }
 
 func (c *Client) Fetch(method string, path string, token string, query url.Values, body io.Reader, result any) error {
-	u, err := url.Parse(c.baseUrl + path)
+	url, err := url.Parse(c.baseUrl + path)
 	if err != nil {
 		return fmt.Errorf("creating request url failed: %w", err)
 	}
-	u.RawQuery = query.Encode()
+	url.RawQuery = query.Encode()
 
-	req, err := http.NewRequest(method, u.String(), body)
+	req, err := http.NewRequest(method, url.String(), body)
 	if err != nil {
 		return fmt.Errorf("creating request failed: %w", err)
 	}
@@ -37,6 +37,7 @@ func (c *Client) Fetch(method string, path string, token string, query url.Value
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {

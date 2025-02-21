@@ -12,7 +12,7 @@ func GetAllArtists(db *sql.DB) ([]models.ArtistFromDB, error) {
 		SELECT a.id, a.gid, a.name, a.sort_name, a.comment, ai.isni
 		FROM artist a
 		LEFT JOIN artist_isni ai ON a.id = ai.artist
-		ORDER BY a.id ASC LIMIT 10
+		ORDER BY a.id
 	`
 
 	rows, err := db.Query(query)
